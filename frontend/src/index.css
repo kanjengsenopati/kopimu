@@ -1,20 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  /* Custom Radius */
+  --radius-3xl: 24px;
+  
+  /* Custom Shadows */
+  --shadow-premium: 0 8px 30px rgb(0 0 0 / 4%);
+  
+  /* Semantic Colors */
+  --color-emerald-600: #10B981;
+  --color-slate-400: #94A3B8;
+  --color-slate-600: #475569;
+  --color-slate-800: #1E293B;
+  --color-slate-900: #0F172A;
+  --color-blue-600: #2563EB;
+  --color-red-600: #DC2626;
+}
 
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: -0.015em;
   }
 }
 
 @layer components {
   .card-premium {
-    @apply bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 relative overflow-hidden flex flex-col transition-all duration-300;
+    @apply bg-white rounded-3xl shadow-premium p-6 relative overflow-hidden flex flex-col transition-all duration-300;
   }
 
   .glass-nav {
@@ -30,12 +46,12 @@
   }
 
   .badge-success {
-    @apply bg-emerald-600 bg-opacity-10 text-emerald-600 text-[11px] font-bold px-2 py-1 rounded-lg;
+    @apply bg-emerald-600/10 text-emerald-600 text-[11px] font-bold px-2 py-1 rounded-lg;
   }
+}
 
-  .shadow-premium {
-    box-shadow: 0 8px 30px rgb(0 0 0 / 4%);
-  }
+.shadow-premium {
+  box-shadow: var(--shadow-premium);
 }
 
 .tracking-tightest {
