@@ -27,6 +27,8 @@ export const LendingManager = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab ] = useState<'all' | 'pending' | 'active'>('all');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newLoan, setNewLoan] = useState({ memberId: '', amount: '', tenor: '12', purpose: '' });
 
   const fetchLoans = async () => {
     setLoading(true);
@@ -43,6 +45,18 @@ export const LendingManager = () => {
   useEffect(() => {
     fetchLoans();
   }, []);
+
+  const handleAddLoan = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post('/api/lending/loans', newLoan);
+      setShowAddForm(false);
+      setNewLoan({ memberId: '', amount: '', tenor: '12', purpose: '' });
+      fetchLoans();
+    } catch (err) {
+      alert('Gagal membuat pengajuan pinjaman');
+    }
+  };
 
   const formatIDR = (val: number) => {
     return new Intl.NumberFormat('id-ID').format(Number(val));
@@ -66,9 +80,9 @@ export const LendingManager = () => {
   });
 
   const stats = [
-    { label: 'Menunggu Persetujuan', value: loans.filter(l => l.status === 'PENDING').length, color: 'text-amber-600', icon: <Clock size={18} /> },
-    { label: 'Pinjaman Aktif', value: loans.filter(l => l.status === 'APPROVED').length, color: 'text-blue-600', icon: <TrendingUp size={18} /> },
-    { label: 'Selesai (Lunas)', value: loans.filter(l => l.status === 'PAID').length, color: 'text-emerald-600', icon: <CheckCircle size={18} /> },
+    { label: 'Pending', value: loans.filter(l => l.status === 'PENDING').length, color: 'text-amber-600', bg: 'bg-amber-50', icon: <Clock size={16} /> },
+    { label: 'Aktif', value: loans.filter(l => l.status === 'APPROVED').length, color: 'text-blue-600', bg: 'bg-blue-50', icon: <TrendingUp size={16} /> },
+    { label: 'Lunas', value: loans.filter(l => l.status === 'PAID').length, color: 'text-emerald-600', bg: 'bg-emerald-50', icon: <CheckCircle size={16} /> },
   ];
 
   return (
@@ -89,26 +103,76 @@ export const LendingManager = () => {
               className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600/10 w-64"
             />
           </div>
-          <button className="btn-primary flex items-center gap-2 px-4 py-2.5">
-            <Plus size={18} /> Pengajuan Baru
+          <button 
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="btn-primary flex items-center gap-2 px-4 py-2.5"
+          >
+            <Plus size={18} /> {showAddForm ? 'Batalkan' : 'Pengajuan Baru'}
           </button>
         </div>
       </header>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Global Refined Style */}
       <div className="grid grid-cols-3 gap-6">
         {stats.map((s, i) => (
-          <div key={i} className="card-premium flex items-center gap-4">
-             <div className={`p-3 rounded-xl bg-slate-50 ${s.color}`}>
-                {s.icon}
+          <div key={i} className="card-premium p-4 flex flex-col items-center">
+             <div className="flex justify-between items-center w-full mb-3">
+                <Text.Label className="text-slate-400 font-bold tracking-[2px]">{s.label}</Text.Label>
+                <div className={`p-2 rounded-xl scale-90 ${s.bg} ${s.color}`}>
+                   {s.icon}
+                </div>
              </div>
-             <div>
-                <Text.Label className="text-slate-400 uppercase tracking-widest">{s.label}</Text.Label>
-                <div className="text-2xl font-bold text-slate-900 mt-1">{s.value}</div>
-             </div>
+             <Text.H1 className={`text-2xl font-bold text-center ${s.color}`}>{s.value}</Text.H1>
           </div>
         ))}
       </div>
+
+      {/* Inline Application Form */}
+      {showAddForm && (
+        <form onSubmit={handleAddLoan} className="card-premium p-6 border-blue-100 bg-blue-50/10 animate-in zoom-in-95 duration-300">
+           <div className="flex justify-between items-center mb-6">
+              <Text.H2>Form Pengajuan Pinjaman</Text.H2>
+              <Text.Caption className="not-italic text-blue-600 font-bold uppercase tracking-widest text-[10px]">Verifikasi SLIK Diperlukan</Text.Caption>
+           </div>
+           <div className="grid grid-cols-4 gap-4">
+              <div className="space-y-1.5">
+                 <Text.Label>Pilih Anggota</Text.Label>
+                 <input 
+                   required
+                   placeholder="ID Anggota"
+                   value={newLoan.memberId}
+                   onChange={e => setNewLoan({...newLoan, memberId: e.target.value})}
+                   className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm font-medium"
+                 />
+              </div>
+              <div className="space-y-1.5">
+                 <Text.Label>Plafond (Rp)</Text.Label>
+                 <input 
+                   required
+                   type="number"
+                   value={newLoan.amount}
+                   onChange={e => setNewLoan({...newLoan, amount: e.target.value})}
+                   className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm font-bold text-blue-600"
+                 />
+              </div>
+              <div className="space-y-1.5">
+                 <Text.Label>Tenor (Bulan)</Text.Label>
+                 <select 
+                   value={newLoan.tenor}
+                   onChange={e => setNewLoan({...newLoan, tenor: e.target.value})}
+                   className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm font-bold"
+                 >
+                    {[6, 12, 18, 24, 36].map(m => <option key={m} value={m}>{m} Bulan</option>)}
+                 </select>
+              </div>
+              <div className="space-y-1.5 flex flex-col justify-end">
+                 <button type="submit" className="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all text-sm">
+                    Kirim Pengajuan
+                 </button>
+              </div>
+           </div>
+        </form>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-4 border-b border-slate-100 pb-px">

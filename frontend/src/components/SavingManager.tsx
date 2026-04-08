@@ -22,6 +22,8 @@ export const SavingManager = () => {
   const [entries, setEntries] = useState<SavingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newSaving, setNewSaving] = useState({ memberId: '', type: 'SUKARELA', amount: '' });
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -39,14 +41,26 @@ export const SavingManager = () => {
     fetchEntries();
   }, []);
 
+  const handleAddSaving = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post('/api/savings', newSaving);
+      setShowAddForm(false);
+      setNewSaving({ memberId: '', type: 'SUKARELA', amount: '' });
+      fetchEntries();
+    } catch (err) {
+      alert('Gagal mencatat setoran');
+    }
+  };
+
   const totalPokok = entries.filter(e => e.type === 'POKOK').reduce((sum, e) => sum + Number(e.amount), 0);
   const totalWajib = entries.filter(e => e.type === 'WAJIB').reduce((sum, e) => sum + Number(e.amount), 0);
   const totalSukarela = entries.filter(e => e.type === 'SUKARELA').reduce((sum, e) => sum + Number(e.amount), 0);
 
   const stats = [
-    { label: 'Simp. Pokok', value: totalPokok, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'Simp. Wajib', value: totalWajib, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { label: 'Simp. Sukarela', value: totalSukarela, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Pokok', value: totalPokok, color: 'text-blue-600', bg: 'bg-blue-50', icon: <Database size={16} /> },
+    { label: 'Wajib', value: totalWajib, color: 'text-indigo-600', bg: 'bg-indigo-50', icon: <Plus size={16} /> },
+    { label: 'Sukarela', value: totalSukarela, color: 'text-emerald-600', bg: 'bg-emerald-50', icon: <Wallet size={16} /> },
   ];
 
   const filteredEntries = entries.filter(e => 
@@ -76,32 +90,81 @@ export const SavingManager = () => {
               className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600/10 w-64"
             />
           </div>
-          <button className="btn-primary flex items-center gap-2 px-4 py-2.5">
-            <Plus size={18} /> Catat Setoran
+          <button 
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="btn-primary flex items-center gap-2 px-4 py-2.5"
+          >
+            <Plus size={18} /> {showAddForm ? 'Batalkan' : 'Catat Setoran'}
           </button>
         </div>
       </header>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Global Refined Style */}
       <div className="grid grid-cols-3 gap-6">
         {stats.map((s, i) => (
-          <div key={i} className="card-premium">
-            <div className="flex justify-between items-start mb-4">
-              <div className={`p-2 rounded-lg ${s.bg} ${s.color}`}>
-                <Wallet size={20} />
-              </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-50 text-slate-400 uppercase tracking-widest border border-slate-100">
-                Summary
-              </span>
-            </div>
-            <Text.Label className="text-slate-400">{s.label}</Text.Label>
-            <div className="flex items-baseline gap-1 mt-1">
-              <span className={`text-sm font-bold opacity-40 ${s.color}`}>Rp</span>
-              <Text.Amount className={`text-2xl ${s.color}`}>{formatIDR(s.value)}</Text.Amount>
-            </div>
+          <div key={i} className="card-premium p-4 flex flex-col items-center">
+             <div className="flex justify-between items-center w-full mb-3">
+                <Text.Label className="text-slate-400 font-bold tracking-[2px]">{s.label}</Text.Label>
+                <div className={`p-2 rounded-xl scale-90 ${s.bg} ${s.color}`}>
+                   {s.icon}
+                </div>
+             </div>
+             <div className="flex items-baseline gap-1">
+                <span className={`text-[12px] font-bold opacity-30 ${s.color}`}>Rp</span>
+                <Text.Amount className={`text-2xl ${s.color}`}>{formatIDR(s.value)}</Text.Amount>
+             </div>
           </div>
         ))}
       </div>
+
+      {/* Inline Entry Form */}
+      {showAddForm && (
+        <form onSubmit={handleAddSaving} className="card-premium p-6 border-blue-100 bg-blue-50/10 animate-in zoom-in-95 duration-300">
+          <div className="flex justify-between items-center mb-6">
+             <Text.H2>Input Setoran Baru</Text.H2>
+             <Text.Caption className="not-italic text-blue-600 font-bold uppercase tracking-widest text-[10px]">Transaksi Manual</Text.Caption>
+          </div>
+          <div className="grid grid-cols-4 gap-4">
+             <div className="space-y-1.5">
+                <Text.Label>Pilih Anggota</Text.Label>
+                <input 
+                  required
+                  placeholder="ID Anggota"
+                  value={newSaving.memberId}
+                  onChange={e => setNewSaving({...newSaving, memberId: e.target.value})}
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm"
+                />
+             </div>
+             <div className="space-y-1.5">
+                <Text.Label>Jenis Simpanan</Text.Label>
+                <select 
+                  value={newSaving.type}
+                  onChange={e => setNewSaving({...newSaving, type: e.target.value})}
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm font-bold text-slate-700"
+                >
+                  <option value="POKOK">Simpanan Pokok</option>
+                  <option value="WAJIB">Simpanan Wajib</option>
+                  <option value="SUKARELA">Simpanan Sukarela</option>
+                </select>
+             </div>
+             <div className="space-y-1.5">
+                <Text.Label>Nominal Setoran (Rp)</Text.Label>
+                <input 
+                  required
+                  type="number"
+                  value={newSaving.amount}
+                  onChange={e => setNewSaving({...newSaving, amount: e.target.value})}
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm font-bold text-blue-600"
+                />
+             </div>
+             <div className="space-y-1.5 flex flex-col justify-end">
+                <button type="submit" className="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all text-sm">
+                   Simpan Transaksi
+                </button>
+             </div>
+          </div>
+        </form>
+      )}
 
       {/* Main Table */}
       <section className="bg-white rounded-[24px] shadow-premium border border-slate-100 overflow-hidden">

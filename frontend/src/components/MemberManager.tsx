@@ -24,6 +24,8 @@ export const MemberManager = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newMember, setNewMember] = useState({ nik: '', nama: '', alamat: '', telepon: '' });
 
   const fetchMembers = async () => {
     setLoading(true);
@@ -41,10 +43,22 @@ export const MemberManager = () => {
     fetchMembers();
   }, []);
 
+  const handleAddMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post('/api/members', newMember);
+      setShowAddForm(false);
+      setNewMember({ nik: '', nama: '', alamat: '', telepon: '' });
+      fetchMembers();
+    } catch (err) {
+      alert('Gagal menambah anggota');
+    }
+  };
+
   const stats = [
-    { label: 'Total Anggota', value: members.length, icon: <Users size={20} />, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'Anggota Aktif', value: members.filter(m => m.status === 'AKTIF').length, icon: <CheckCircle size={20} />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Calon Anggota', value: members.filter(m => m.status === 'PENDING').length, icon: <Loader2 size={20} />, color: 'text-slate-400', bg: 'bg-slate-50' },
+    { label: 'Total Anggota', value: members.length, icon: <Users size={16} />, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Anggota Aktif', value: members.filter(m => m.status === 'AKTIF').length, icon: <CheckCircle size={16} />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Calon Anggota', value: members.filter(m => m.status === 'PENDING').length, icon: <Loader2 size={16} />, color: 'text-slate-400', bg: 'bg-slate-50' },
   ];
 
   const filteredMembers = members.filter(m => 
@@ -70,26 +84,72 @@ export const MemberManager = () => {
               className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-600/10 w-64"
             />
           </div>
-          <button className="btn-primary flex items-center gap-2 px-4 py-2.5">
-            <UserPlus size={18} /> Tambah Anggota
+          <button 
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="btn-primary flex items-center gap-2 px-4 py-2.5"
+          >
+            <UserPlus size={18} /> {showAddForm ? 'Batalkan' : 'Tambah Anggota'}
           </button>
         </div>
       </header>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Global Refined Style */}
       <div className="grid grid-cols-3 gap-6">
         {stats.map((s, i) => (
-          <div key={i} className="card-premium flex items-center gap-4">
-            <div className={`p-4 rounded-2xl ${s.bg} ${s.color}`}>
-              {s.icon}
+          <div key={i} className="card-premium p-4 flex flex-col items-center">
+            <div className="flex justify-between items-center w-full mb-3">
+               <Text.Label className="text-slate-400 font-bold tracking-[2px]">{s.label}</Text.Label>
+               <div className={`p-2 rounded-xl scale-90 ${s.bg} ${s.color}`}>
+                  {s.icon}
+               </div>
             </div>
-            <div>
-              <Text.Label>{s.label}</Text.Label>
-              <Text.H1 className="text-2xl mt-1">{s.value}</Text.H1>
-            </div>
+            <Text.H1 className={`text-2xl font-bold text-center ${s.color}`}>{s.value}</Text.H1>
           </div>
         ))}
       </div>
+
+      {/* Inline Add Form */}
+      {showAddForm && (
+        <form onSubmit={handleAddMember} className="card-premium p-6 border-blue-100 bg-blue-50/10 animate-in zoom-in-95 duration-300">
+           <div className="flex justify-between items-center mb-6">
+              <Text.H2>Pendaftaran Anggota Baru</Text.H2>
+              <Text.Caption className="not-italic text-blue-600 font-bold uppercase tracking-widest text-[10px]">Data Wajib Diisi</Text.Caption>
+           </div>
+           <div className="grid grid-cols-4 gap-4">
+              <div className="space-y-1.5">
+                 <Text.Label>NIK (16 Digit)</Text.Label>
+                 <input 
+                   required
+                   value={newMember.nik}
+                   onChange={e => setNewMember({...newMember, nik: e.target.value})}
+                   className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm"
+                 />
+              </div>
+              <div className="space-y-1.5">
+                 <Text.Label>Nama Lengkap</Text.Label>
+                 <input 
+                   required
+                   value={newMember.nama}
+                   onChange={e => setNewMember({...newMember, nama: e.target.value})}
+                   className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm"
+                 />
+              </div>
+              <div className="space-y-1.5">
+                 <Text.Label>Nomor Telepon</Text.Label>
+                 <input 
+                   value={newMember.telepon}
+                   onChange={e => setNewMember({...newMember, telepon: e.target.value})}
+                   className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/10 text-sm"
+                 />
+              </div>
+              <div className="space-y-1.5 flex flex-col justify-end">
+                 <button type="submit" className="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all text-sm">
+                    Simpan Anggota
+                 </button>
+              </div>
+           </div>
+        </form>
+      )}
 
       {/* Main Table */}
       <section className="bg-white rounded-[24px] shadow-premium border border-slate-100 overflow-hidden">

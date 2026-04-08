@@ -158,29 +158,31 @@ const AccountingDashboard = () => (
       </div>
     </header>
 
-    {/* Accounting Overview Cards - CENTER ROW 1, LEFT ROW 2 */}
+    {/* Accounting Overview Cards - Dense & Compact */}
     <div className="grid grid-cols-3 gap-6 mb-8">
       {[
-        { label: 'Total Aset', amount: '1.450.000.000', change: '+2.1%', color: 'text-blue-600', icon: <TrendingUp size={18} /> },
-        { label: 'Total Liabilitas', amount: '820.000.000', change: '-1.5%', color: 'text-red-600', icon: <AlertCircle size={18} /> },
-        { label: 'Ekuitas (Modal)', amount: '630.000.000', change: '+5.4%', color: 'text-emerald-600', icon: <Droplets size={18} /> },
+        { label: 'Total Aset', amount: '1.450.000.000', change: '+2.1%', color: 'text-blue-600', icon: <TrendingUp size={16} />, bg: 'bg-blue-50' },
+        { label: 'Liabilitas', amount: '820.000.000', change: '-1.5%', color: 'text-red-600', icon: <AlertCircle size={16} />, bg: 'bg-red-50' },
+        { label: 'Ekuitas', amount: '630.000.000', change: '+5.4%', color: 'text-emerald-600', icon: <Droplets size={16} />, bg: 'bg-emerald-50' },
       ].map((card, i) => (
-        <div key={i} className="card-premium">
-          <div className="flex justify-center items-center gap-2 mb-4">
-            <div className={card.color}>{card.icon}</div>
-            <Text.Label className={card.color}>{card.label}</Text.Label>
+        <div key={i} className="card-premium p-4 flex flex-col items-center">
+          <div className="flex justify-between items-center w-full mb-4">
+             <Text.Label className="text-slate-400 font-bold tracking-[2px]">{card.label}</Text.Label>
+             <div className={`p-2 rounded-xl scale-90 ${card.bg} ${card.color}`}>
+                {card.icon}
+             </div>
           </div>
-          <div className="flex flex-col items-start w-full">
-            <div className="flex items-baseline gap-1">
-              <span className={`text-lg font-bold ${card.color} opacity-60`}>Rp</span>
-              <Text.H1 className={`text-[28px] leading-tight ${card.color}`}>{card.amount}</Text.H1>
-            </div>
-            <div className="mt-4 flex flex-col items-start gap-1">
-              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${card.change.startsWith('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
-                {card.change}
-              </span>
-              <Text.Caption className="not-italic text-[10px]">Performa Bulan Ini</Text.Caption>
-            </div>
+          
+          <div className="flex items-baseline gap-1">
+            <span className={`text-sm font-bold opacity-30 ${card.color}`}>Rp</span>
+            <Text.H1 className={`text-[26px] leading-tight ${card.color}`}>{card.amount}</Text.H1>
+          </div>
+
+          <div className="mt-4 flex items-center gap-2">
+            <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${card.change.startsWith('+') ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+              {card.change}
+            </span>
+            <Text.Caption className="not-italic text-[9px] uppercase tracking-wider font-bold">MoM Growth</Text.Caption>
           </div>
         </div>
       ))}
