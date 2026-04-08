@@ -1,0 +1,13 @@
+{
+  "name": "kopimu-root",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "deploy": "vercel"
+  }
+}
