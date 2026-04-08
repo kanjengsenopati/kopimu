@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { AccountingService } from '../accounting/accounting.service';
 
@@ -17,7 +18,7 @@ export class RetailService {
     memberId?: string;
     items: { productId: string; qty: number }[];
   }) {
-    return this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       let totalSale = 0;
 
       // 1. Kurangi Stok & Hitung Total

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class SettingsService {
    * Mengatur Matrix Permission untuk Role tertentu.
    */
   async updateRolePermissions(roleId: string, permissions: { permissionId: string; scope: string }[]) {
-    return this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Hapus permission lama
       await tx.rolePermission.deleteMany({ where: { roleId } });
       

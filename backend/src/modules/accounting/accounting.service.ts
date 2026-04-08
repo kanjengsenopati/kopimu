@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class AccountingService {
       credit?: number;
     }[];
   }) {
-    return this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Buat Header Jurnal
       const journal = await tx.journal.create({
         data: {
