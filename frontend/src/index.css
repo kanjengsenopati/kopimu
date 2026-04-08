@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.015em;
+  }
+}
+
+@layer components {
+  .card-premium {
+    @apply bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 relative overflow-hidden flex flex-col transition-all duration-300;
+  }
+
+  .glass-nav {
+    @apply sticky bottom-0 w-full bg-white/80 backdrop-blur-md border-t border-slate-100 px-5 py-3 flex justify-around items-center z-50;
+  }
+
+  .glass-header {
+    @apply sticky top-0 w-full bg-white/80 backdrop-blur-md z-50 px-5 py-4 flex justify-between items-center;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white font-bold rounded-2xl px-6 py-4 transition-all hover:bg-blue-700 active:scale-95 text-center flex items-center justify-center;
+  }
+
+  .badge-success {
+    @apply bg-emerald-600 bg-opacity-10 text-emerald-600 text-[11px] font-bold px-2 py-1 rounded-lg;
+  }
+
+  .shadow-premium {
+    box-shadow: 0 8px 30px rgb(0 0 0 / 4%);
+  }
+}
+
+.tracking-tightest {
+  letter-spacing: -0.03em;
+}
