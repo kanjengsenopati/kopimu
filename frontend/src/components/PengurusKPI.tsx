@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text } from './ui/Text';
 import { ArrowLeft, TrendingUp, AlertCircle, Droplets, Users, ArrowRight } from 'lucide-react';
 

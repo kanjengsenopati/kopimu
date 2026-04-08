@@ -25,30 +25,30 @@ export interface Role {
 
 export const settingsService = {
   async getGlobalConfig() {
-    return axios.get(`${API_URL}/config`).then(res => res.data);
+    return axios.get(`${API_URL}/config`).then((res: any) => res.data);
   },
 
   async updateSystemConfig(configs: { key: string; value: string }[]) {
-    return axios.post(`${API_URL}/config`, configs).then(res => res.data);
+    return axios.post(`${API_URL}/config`, configs).then((res: any) => res.data);
   },
 
   async getSHUConfig(): Promise<SHUConfig[]> {
-    return axios.get(`${API_URL}/shu`).then(res => res.data);
+    return axios.get(`${API_URL}/shu`).then((res: any) => res.data);
   },
 
   async updateSHUConfig(configs: SHUConfig[]) {
-    return axios.put(`${API_URL}/shu`, configs).then(res => res.data);
+    return axios.put(`${API_URL}/shu`, configs).then((res: any) => res.data);
   },
 
   async getRoles(): Promise<Role[]> {
-    return axios.get(`${API_URL}/roles`).then(res => res.data);
+    return axios.get(`${API_URL}/roles`).then((res: any) => res.data);
   },
 
   async getPermissions(): Promise<Permission[]> {
-    return axios.get(`${API_URL}/permissions`).then(res => res.data);
+    return axios.get(`${API_URL}/permissions`).then((res: any) => res.data);
   },
 
   async updateRolePermissions(roleId: string, permissions: { permissionId: string; scope: string }[]) {
-    return axios.put(`${API_URL}/roles/${roleId}/permissions`, permissions).then(res => res.data);
+    return axios.put(`${API_URL}/roles/${roleId}/permissions`, permissions).then((res: any) => res.data);
   }
 };

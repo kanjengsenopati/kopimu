@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Text } from './ui/Text';
-import { Shield, Percent, Users, Save, Check, X, Globe, User, Loader2 } from 'lucide-react';
-import { settingsService, Role, Permission, SHUConfig } from '../services/settings.service';
+import { Shield, Percent, Save, Globe, User, Loader2 } from 'lucide-react';
+import { settingsService } from '../services/settings.service';
+import type { Role, Permission, SHUConfig } from '../services/settings.service';
 
 export const SettingsHub = () => {
   const [activeTab, setActiveTab] = useState<'rbac' | 'shu' | 'profile'>('rbac');

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState, cloneElement } from 'react';
+import type { ReactElement } from 'react';
 import { Text } from './components/ui/Text';
 import { 
   Wallet, ArrowUpRight, ArrowDownLeft, Building2, ShoppingBag, Factory, 
@@ -110,7 +111,7 @@ function App() {
                   onClick={() => item.label === 'Dashboard' && setCurrentView('pengurus-kpi')}
                 >
                   <div className={`w-14 h-14 rounded-2xl ${item.color} flex items-center justify-center shadow-sm border border-black/[0.02]`}>
-                    {React.cloneElement(item.icon as React.ReactElement<any>, { size: 24 })}
+                    {cloneElement(item.icon as ReactElement<any>, { size: 24 })}
                   </div>
                   <Text.Label className="text-[10px] text-center leading-tight whitespace-nowrap">{item.label}</Text.Label>
                 </div>
@@ -190,7 +191,7 @@ function App() {
             }}
           >
             <div className={`p-1 ${item.action ? 'bg-blue-50 rounded-xl px-4 py-2 mt-[-4px]' : ''}`}>
-              {React.cloneElement(item.icon as React.ReactElement<any>, { size: 24, strokeWidth: item.action ? 2.5 : 2 })}
+              {cloneElement(item.icon as ReactElement<any>, { size: 24, strokeWidth: item.action ? 2.5 : 2 })}
             </div>
             <Text.Label className={`text-[9px] ${item.action ? 'text-blue-600 font-bold' : ''}`}>{item.label}</Text.Label>
           </div>
