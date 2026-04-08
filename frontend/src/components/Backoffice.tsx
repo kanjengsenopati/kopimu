@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from './ui/Text';
 import { 
-  BarChart3, Users, Settings, Database, 
+  BarChart3, Users, Settings, 
   Search, ShieldCheck, Download, Plus, Filter, LayoutDashboard, Package, TrendingUp, AlertCircle, Droplets,
   ChevronDown, User as UserIcon, Bell
 } from 'lucide-react';
