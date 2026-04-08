@@ -37,49 +37,51 @@ export const Login = ({ onLogin }: LoginProps) => {
   return (
     <div className="min-h-screen w-full flex bg-white overflow-hidden font-sans">
       {/* Visual Column (Left) - Hidden on Mobile */}
-      <div className="hidden lg:flex lg:w-3/5 relative bg-gradient-to-br from-blue-700 via-blue-900 to-slate-900 p-20 flex-col justify-between overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-blue-700 via-blue-900 to-slate-900 p-12 flex-col justify-between overflow-hidden">
         {/* Animated Background Orbs */}
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-500/20 rounded-full blur-[120px] animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/10 rounded-full blur-[100px]" />
         
         <div className="relative z-10">
-          <div className="flex items-center gap-3 text-white mb-12">
-            <div className="w-12 h-12 bg-white/10 backdrop-blur-xl border border-white/20 rounded-[18px] flex items-center justify-center">
-              <ShieldCheck size={28} className="text-white" />
+          <div className="flex items-center gap-2 text-white mb-8">
+            <div className="w-10 h-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-[14px] flex items-center justify-center">
+              <ShieldCheck size={20} className="text-white" />
             </div>
-            <span className="text-2xl font-bold tracking-tight">KOPIMU <span className="font-light text-blue-300">SYSTEM</span></span>
+            <span className="text-xl font-bold tracking-tight">KOPIMU <span className="font-light text-blue-300">CORE</span></span>
           </div>
 
-          <div className="space-y-6 max-w-lg">
-            <Text.H1 className="text-white text-5xl leading-tight">
+          <div className="space-y-4 max-w-md">
+            <Text.H1 className="text-white text-4xl leading-tight">
               Koperasi Pintar <br /> 
-              <span className="text-blue-400">Multi Usaha.</span>
+              <span className="text-blue-400 font-medium">Multi Usaha.</span>
             </Text.H1>
-            <p className="text-slate-400 text-lg font-medium leading-relaxed">
-              Platform manajemen koperasi modern yang transparan, aman, dan mematuhi standar SAK EP untuk masa depan ekonomi mandiri.
+            <p className="text-slate-400 text-sm font-medium leading-relaxed opacity-80">
+              Platform manajemen koperasi modern yang transparan, aman, dan mematuhi standar SAK EP.
             </p>
           </div>
         </div>
 
-        {/* Feature Cards Showcase */}
-        <div className="relative z-10 grid grid-cols-2 gap-4">
+        {/* Feature Cards Showcase - Denser Layout */}
+        <div className="relative z-10 grid grid-cols-2 gap-3">
           {[
-            { icon: <TrendingUp size={18} />, label: 'SAK EP Accounting', desc: 'Double-entry journaling' },
-            { icon: <Users size={18} />, label: 'Member Core', desc: 'Real-time database' },
-            { icon: <Lock size={18} />, label: 'RBAC Security', desc: 'Granular permissions' },
-            { icon: <Globe size={18} />, label: 'Cloud Native', desc: 'Sync across branches' },
+            { icon: <TrendingUp size={16} />, label: 'SAK EP', desc: 'Accounting' },
+            { icon: <Users size={16} />, label: 'Core', desc: 'Real-time DB' },
+            { icon: <Lock size={16} />, label: 'RBAC', desc: 'Permissions' },
+            { icon: <Globe size={16} />, label: 'Branch', desc: 'Cloud Sync' },
           ].map((item, i) => (
-            <div key={i} className="p-5 bg-white/5 backdrop-blur-md border border-white/10 rounded-[24px] hover:bg-white/10 transition-all cursor-default">
-              <div className="text-blue-400 mb-3">{item.icon}</div>
-              <div className="text-white text-sm font-bold">{item.label}</div>
-              <div className="text-slate-500 text-[11px] mt-1 uppercase tracking-wider">{item.desc}</div>
+            <div key={i} className="p-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-[18px] hover:bg-white/10 transition-all cursor-default flex items-center gap-3">
+              <div className="text-blue-400 shrink-0">{item.icon}</div>
+              <div>
+                <div className="text-white text-[11px] font-bold leading-none">{item.label}</div>
+                <div className="text-slate-500 text-[9px] mt-1 uppercase tracking-wider font-bold">{item.desc}</div>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Form Column (Right) */}
-      <div className="w-full lg:w-2/5 flex flex-col items-center justify-center p-8 lg:p-24 relative bg-slate-50 lg:bg-white">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 lg:p-16 relative bg-slate-50 lg:bg-white">
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center gap-2 mb-12">
              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
