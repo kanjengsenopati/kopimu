@@ -258,7 +258,7 @@ const ProfileSettings = () => {
 
       <div className="grid grid-cols-2 gap-4">
         {[
-          { key: 'COOP_NAME', label: 'Nama Koperasi', default: 'KSU Mandiri Sejahtera' },
+          { key: 'COOP_NAME', label: 'Nama Koperasi', default: 'KOPIMU (Koperasi Pintar Multi Usaha)' },
           { key: 'COOP_LEGAL_NO', label: 'No. Badan Hukum', default: 'AHU-001234.AH.01.2024' },
           { key: 'COOP_ADDRESS', label: 'Alamat Pusat', default: 'Jl. Utama No. 45, Jakarta' },
           { key: 'COOP_EMAIL', label: 'Email Official', default: 'info@ksumandiri.id' },
