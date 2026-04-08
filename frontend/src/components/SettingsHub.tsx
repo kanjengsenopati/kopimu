@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Text } from './ui/Text';
-import { Shield, Percent, Save, Globe, User, Loader2 } from 'lucide-react';
+import { Shield, Percent, Save, Globe, User, Loader2, Settings } from 'lucide-react';
 import { settingsService } from '../services/settings.service';
 import type { Role, Permission, SHUConfig } from '../services/settings.service';
 
@@ -280,6 +280,135 @@ const ProfileSettings = () => {
       <button className="btn-primary flex items-center gap-2 px-6">
         <Save size={18} /> Simpan Profil
       </button>
+    </div>
+  );
+};
+
+const KoperasiRulesPanel = () => {
+  const [configs, setConfigs] = useState<{key: string, value: string}[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    settingsService.getGlobalConfig()
+      .then(setConfigs)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const findConfig = (key: string) => configs.find(c => c.key === key);
+  
+  const handleToggle = (key: string) => {
+    setConfigs(prev => prev.map(c => 
+      c.key === key ? { ...c, value: c.value === 'ON' ? 'OFF' : 'ON' } : c
+    ));
+  };
+
+  const handleValueChange = (key: string, val: string) => {
+    setConfigs(prev => prev.map(c => c.key === key ? { ...c, value: val } : c));
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await settingsService.updateSystemConfig(configs);
+      alert('Aturan koperasi berhasil diperbarui!');
+    } catch (err) {
+      alert('Gagal menyimpan aturan');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin text-blue-600" /></div>;
+
+  return (
+    <div className="space-y-8 max-w-3xl">
+      <div className="flex justify-between items-center">
+        <div>
+          <Text.H2>Kebijakan Operasional</Text.H2>
+          <Text.Caption className="not-italic">Konfigurasi biaya administrasi dan simpanan wajib secara dinamis.</Text.Caption>
+        </div>
+        <button 
+          onClick={handleSave}
+          disabled={saving}
+          className="btn-primary flex items-center gap-2 px-6"
+        >
+          {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />} Simpan Aturan
+        </button>
+      </div>
+
+      <div className="grid gap-6">
+        {/* Loan Admin Fee Rule */}
+        <div className="card-premium flex justify-between items-center">
+          <div className="flex gap-4">
+            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+               <Percent size={24} />
+            </div>
+            <div>
+              <Text.Body className="font-bold">Biaya Administrasi Pinjaman</Text.Body>
+              <Text.Caption className="not-italic">Potongan otomatis saat pencairan dana pinjaman.</Text.Caption>
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            {findConfig('LOAN_ADMIN_FEE_ENABLED')?.value === 'ON' && (
+              <div className="flex items-center bg-slate-50 p-1 rounded-xl">
+                <input 
+                  type="number" 
+                  value={findConfig('LOAN_ADMIN_FEE_VALUE')?.value || '0'}
+                  onChange={(e) => handleValueChange('LOAN_ADMIN_FEE_VALUE', e.target.value)}
+                  className="w-16 bg-transparent text-right font-bold text-blue-600 outline-none px-2"
+                />
+                <select 
+                  value={findConfig('LOAN_ADMIN_FEE_TYPE')?.value || 'PERCENT'}
+                  onChange={(e) => handleValueChange('LOAN_ADMIN_FEE_TYPE', e.target.value)}
+                  className="bg-transparent text-[10px] font-bold text-slate-400 outline-none pr-2"
+                >
+                  <option value="PERCENT">%</option>
+                  <option value="FLAT">IDR</option>
+                </select>
+              </div>
+            )}
+            <button 
+              onClick={() => handleToggle('LOAN_ADMIN_FEE_ENABLED')}
+              className={`w-14 h-8 rounded-full transition-all relative ${findConfig('LOAN_ADMIN_FEE_ENABLED')?.value === 'ON' ? 'bg-blue-600' : 'bg-slate-200'}`}
+            >
+              <div className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-all ${findConfig('LOAN_ADMIN_FEE_ENABLED')?.value === 'ON' ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Mandatory Saving Rule */}
+        <div className="card-premium flex justify-between items-center">
+          <div className="flex gap-4">
+            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
+               <Shield size={24} />
+            </div>
+            <div>
+              <Text.Body className="font-bold">Simpanan Wajib Bulanan</Text.Body>
+              <Text.Caption className="not-italic">Kewajiban setoran rutin setiap bulan bagi anggota aktif.</Text.Caption>
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+             {findConfig('MANDATORY_SAVING_ENABLED')?.value === 'ON' && (
+               <div className="flex items-center bg-slate-50 px-4 py-2 rounded-xl">
+                 <span className="text-[10px] font-bold text-slate-400 mr-2 uppercase tracking-widest">Nominal:</span>
+                 <input 
+                   type="number" 
+                   value={findConfig('MANDATORY_SAVING_VALUE')?.value || '0'}
+                   onChange={(e) => handleValueChange('MANDATORY_SAVING_VALUE', e.target.value)}
+                   className="w-24 bg-transparent text-right font-bold text-emerald-600 outline-none"
+                 />
+               </div>
+             )}
+            <button 
+              onClick={() => handleToggle('MANDATORY_SAVING_ENABLED')}
+              className={`w-14 h-8 rounded-full transition-all relative ${findConfig('MANDATORY_SAVING_ENABLED')?.value === 'ON' ? 'bg-emerald-600' : 'bg-slate-200'}`}
+            >
+              <div className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-all ${findConfig('MANDATORY_SAVING_ENABLED')?.value === 'ON' ? 'left-7' : 'left-1'}`} />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

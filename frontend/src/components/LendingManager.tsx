@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Text } from './ui/Text';
 import { 
-  Database, FileText, Search, Filter, Download, 
-  Clock, CheckCircle, AlertCircle, TrendingUp,
+  Search, Clock, CheckCircle, TrendingUp,
   Plus, MoreVertical, ExternalLink, Loader2
 } from 'lucide-react';
 import axios from 'axios';

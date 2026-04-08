@@ -2,8 +2,7 @@ import React from 'react';
 import { Text } from './ui/Text';
 import { 
   BarChart3, Users, Settings, Database, 
-  Search, ShieldCheck, Download, Plus, Filter, LayoutDashboard, Package, TrendingUp, AlertCircle, Droplets,
-  MoreVertical, Edit, Trash2, Mail, Phone, CheckCircle, XCircle, MapPin, Loader2
+  Search, ShieldCheck, Download, Plus, Filter, LayoutDashboard, Package, TrendingUp, AlertCircle, Droplets
 } from 'lucide-react';
 import { SettingsHub } from './SettingsHub';
 import { MemberManager } from './MemberManager';

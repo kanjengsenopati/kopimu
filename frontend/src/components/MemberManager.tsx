@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Text } from './ui/Text';
 import { 
   Users, UserPlus, Search, Filter, Download, 
-  MoreVertical, Edit, Trash2, Mail, Phone, 
-  CheckCircle, XCircle, MapPin, Loader2
+  CheckCircle, MapPin, Loader2, Phone, Edit, Trash2, MoreVertical
 } from 'lucide-react';
 import axios from 'axios';
 

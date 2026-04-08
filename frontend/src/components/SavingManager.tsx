@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Text } from './ui/Text';
 import { 
   Database, Plus, Search, Filter, Download, 
-  ArrowUpRight, ArrowDownLeft, Wallet, Calendar,
+  ArrowDownLeft, Wallet, Calendar,
   Loader2, MoreHorizontal
 } from 'lucide-react';
 import axios from 'axios';
