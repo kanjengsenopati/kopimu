@@ -25,8 +25,13 @@ export class TransformInterceptor implements NestInterceptor {
 
     // Handle Object
     if (typeof data === 'object') {
-      // Handle Prisma Decimal (or any object with d, e, s properties)
-      if (data.constructor && data.constructor.name === 'Decimal') {
+      // Robust check for Prisma Decimal (works even when minified/obfuscated)
+      if (
+        data !== null &&
+        typeof data.d === 'object' &&
+        typeof data.e === 'number' &&
+        typeof data.s === 'number'
+      ) {
         return Number(data.toString());
       }
       
