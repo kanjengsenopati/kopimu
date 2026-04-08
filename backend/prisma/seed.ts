@@ -62,6 +62,105 @@ async function main() {
   }
   console.log('SHU Config seeded.');
 
+  // 4. Seed Accounts (COA - SAK EP)
+  const accounts = [
+    { code: '101.01', name: 'Kas Tunai', category: 'ASSET', type: 'CASH' },
+    { code: '102.01', name: 'Piutang Pinjaman Anggota', category: 'ASSET', type: 'RECEIVABLE' },
+    { code: '103.01', name: 'Persediaan Barang Retail', category: 'ASSET', type: 'INVENTORY' },
+    { code: '201.01', name: 'Simpanan Pokok', category: 'EQUITY', type: 'EQUITY' },
+    { code: '201.02', name: 'Simpanan Wajib', category: 'EQUITY', type: 'EQUITY' },
+    { code: '201.03', name: 'Simpanan Sukarela', category: 'LIABILITY', type: 'PAYABLE' },
+    { code: '401.01', name: 'Pendapatan Retail', category: 'REVENUE', type: 'REVENUE' },
+    { code: '401.02', name: 'Pendapatan Jasa Pinjaman', category: 'REVENUE', type: 'REVENUE' },
+    { code: '401.03', name: 'Pendapatan Admin Pinjaman', category: 'REVENUE', type: 'REVENUE' },
+    { code: '501.01', name: 'Beban Operasional', category: 'EXPENSE', type: 'EXPENSE' },
+  ];
+
+  for (const a of accounts) {
+    await prisma.account.upsert({
+      where: { code: a.code },
+      update: {},
+      create: a,
+    });
+  }
+  console.log('Accounts (COA) seeded.');
+
+  // 5. Seed System Config (Koperasi Rules)
+  const appConfigs = [
+    { key: 'LOAN_ADMIN_FEE_ENABLED', value: 'ON' },
+    { key: 'LOAN_ADMIN_FEE_TYPE', value: 'PERCENT' },
+    { key: 'LOAN_ADMIN_FEE_VALUE', value: '1' },
+    { key: 'MANDATORY_SAVING_ENABLED', value: 'ON' },
+    { key: 'MANDATORY_SAVING_VALUE', value: '50000' },
+  ];
+
+  for (const c of appConfigs) {
+    await prisma.systemConfig.upsert({
+      where: { key: c.key },
+      update: {},
+      create: c,
+    });
+  }
+  console.log('System Config seeded.');
+
+  // 6. Seed Warehouses
+  const warehouses = [
+    { name: 'Gudang Pusat', location: 'Jakarta' },
+    { name: 'Toko Retail Utama', location: 'Jakarta' },
+  ];
+
+  for (const w of warehouses) {
+    await prisma.warehouse.upsert({
+      where: { id: w.name }, // Hackish for seed, maybe use name as unique for seed
+      update: {},
+      create: w,
+    });
+  }
+  console.log('Warehouses seeded.');
+
+  // 7. Seed Demo Users & Members
+  const adminRole = await prisma.role.findUnique({ where: { name: 'Admin' } });
+  const memberRole = await prisma.role.findUnique({ where: { name: 'Anggota' } });
+
+  if (adminRole && memberRole) {
+    // Admin User
+    await prisma.user.upsert({
+      where: { email: 'admin@kopimu.id' },
+      update: {},
+      create: {
+        email: 'admin@kopimu.id',
+        password: 'password123', // Demo only
+        roleId: adminRole.id,
+      },
+    });
+
+    // Demo Member
+    const demoMember = await prisma.member.upsert({
+      where: { nik: '1234567890' },
+      update: {},
+      create: {
+        nik: '1234567890',
+        nama: 'Budi Santoso (Demo Anggota)',
+        alamat: 'Jl. Melati No. 10, Jakarta',
+        telepon: '081234567890',
+        status: 'AKTIF',
+      },
+    });
+
+    // Member User
+    await prisma.user.upsert({
+      where: { email: 'anggota@kopimu.id' },
+      update: {},
+      create: {
+        email: 'anggota@kopimu.id',
+        password: 'password123',
+        roleId: memberRole.id,
+        memberId: demoMember.id,
+      },
+    });
+    console.log('Demo Users and Member seeded.');
+  }
+
   console.log('Seeding completed successfully.');
 }
 

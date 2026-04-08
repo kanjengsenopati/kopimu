@@ -10,18 +10,21 @@ export class AccountingService {
    * SAK EP: Melakukan pencatatan jurnal double-entry otomatis.
    * Setiap transaksi finansial wajib melewati fungsi ini.
    */
-  async createJournalEntry(data: {
-    description: string;
-    referenceId?: string;
-    entries: {
-      accountCode: string;
-      debit?: number;
-      credit?: number;
-    }[];
-  }) {
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  async createJournalEntry(
+    data: {
+      description: string;
+      referenceId?: string;
+      entries: {
+        accountCode: string;
+        debit?: number;
+        credit?: number;
+      }[];
+    },
+    tx?: Prisma.TransactionClient,
+  ) {
+    const execute = async (client: Prisma.TransactionClient) => {
       // 1. Buat Header Jurnal
-      const journal = await tx.journal.create({
+      const journal = await client.journal.create({
         data: {
           description: data.description,
           reference: data.referenceId,
@@ -31,13 +34,13 @@ export class AccountingService {
       // 2. Buat Detail Entry (Double Entry)
       const detailEntries = await Promise.all(
         data.entries.map(async (entry) => {
-          const account = await tx.account.findUnique({
+          const account = await client.account.findUnique({
             where: { code: entry.accountCode },
           });
 
           if (!account) throw new Error(`Akun dengan kode ${entry.accountCode} tidak ditemukan.`);
 
-          return tx.journalEntry.create({
+          return client.journalEntry.create({
             data: {
               journalId: journal.id,
               accountId: account.id,
@@ -57,6 +60,12 @@ export class AccountingService {
       }
 
       return { journal, entries: detailEntries };
-    });
+    };
+
+    if (tx) {
+      return execute(tx);
+    } else {
+      return this.prisma.$transaction(async (txClient) => execute(txClient));
+    }
   }
 }

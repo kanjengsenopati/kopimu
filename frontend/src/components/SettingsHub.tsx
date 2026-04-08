@@ -5,7 +5,7 @@ import { settingsService } from '../services/settings.service';
 import type { Role, Permission, SHUConfig } from '../services/settings.service';
 
 export const SettingsHub = () => {
-  const [activeTab, setActiveTab] = useState<'rbac' | 'shu' | 'profile'>('rbac');
+  const [activeTab, setActiveTab] = useState<'rbac' | 'shu' | 'profile' | 'rules'>('rbac');
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -15,6 +15,7 @@ export const SettingsHub = () => {
           { id: 'rbac', label: 'RBAC Matrix', icon: <Shield size={16} /> },
           { id: 'shu', label: 'Formula SHU', icon: <Percent size={16} /> },
           { id: 'profile', label: 'Profil Koperasi', icon: <Globe size={16} /> },
+          { id: 'rules', label: 'Rule Koperasi', icon: <Settings size={16} /> },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -34,6 +35,7 @@ export const SettingsHub = () => {
       {activeTab === 'rbac' && <RBACMatrix />}
       {activeTab === 'shu' && <SHUConfigPanel />}
       {activeTab === 'profile' && <ProfileSettings />}
+      {activeTab === 'rules' && <KoperasiRulesPanel />}
     </div>
   );
 };

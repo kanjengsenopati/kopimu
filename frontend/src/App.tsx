@@ -9,12 +9,29 @@ import {
 import { LoanSimulation } from './components/LoanSimulation';
 import { PengurusKPI } from './components/PengurusKPI';
 import { Backoffice } from './components/Backoffice';
+import { Login } from './components/Login';
 
 type ViewState = 'member-dashboard' | 'simulation' | 'pengurus-kpi' | 'backoffice';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>('member-dashboard');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState<'ANGGOTA' | 'PENGURUS'>('ANGGOTA');
+
+  const handleLogin = (email: string) => {
+    setIsAuthenticated(true);
+    if (email === 'admin@kopimu.id') {
+      setRole('PENGURUS');
+      setCurrentView('backoffice');
+    } else {
+      setRole('ANGGOTA');
+      setCurrentView('member-dashboard');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   // Handle Navigation
   if (currentView === 'simulation') {
